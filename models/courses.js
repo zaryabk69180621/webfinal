@@ -5,7 +5,9 @@ let schema= require("mongoose").Schema;
 let courseSchema=new schema({
 name:{
     type:String,
-    required:true
+    required:true,
+    unique:true
+
 },
 credits:{
     type:Number,
@@ -16,7 +18,7 @@ Code:{
     required:true
 }
 
-},{collation:"courses"})
+},{collection:"courses"})
 
 let model= mongoose.model("courses",courseSchema);
 

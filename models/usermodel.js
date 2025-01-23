@@ -18,8 +18,8 @@ password:{
     type:String,
     required:true
 },
-roll:{
-    type:stringify,
+role:{
+    type:String,
     enum:["teacher","student","admin"],
 
 
@@ -43,7 +43,10 @@ enrollements:[
        
 
 ]
-
+,probation:{
+    type:Boolean,
+    default:false
+}
 
 
 

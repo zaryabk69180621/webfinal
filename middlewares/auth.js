@@ -1,10 +1,11 @@
 let jwt = require("jsonwebtoken");
 
-function auth(req,res,next){
+async function auth(req,res,next){
 try{
     
-    let token= req.headers.authorization.split(" ")[0];
-    let{_id,role}= jwt.verify({_id,role},process.env.SECRET);
+    let token= req.headers.authorization.split(" ")[1];
+    console.log("token",token);
+    let{_id,role}= await jwt.verify(token,process.env.SECRET);
    
     req._id=_id;
     req.role=role;
@@ -12,8 +13,10 @@ try{
     next();
    
 }catch(e){
+    console.log(e);
     res.status(500);
     res.send(e.message);
 }
 
 }
+module.exports=auth;

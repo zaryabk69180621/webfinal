@@ -13,14 +13,16 @@ return token;
 
 
 }
-router.post("/sudosignin",async(req,res)=>{
+router.post("/adminsignin",async(req,res)=>{
 try{
     let {email, password}= req.body;
-let user= await usermodel.find({email});
+
+let user= (await usermodel.find({email}))[0];
+console.log("email",user);
 if(!user){
     throw Error("not a registered admin");
 }
-if(user[0].password!=password){
+if(!bcrypt.compareSync(password,user.password)){
 
 throw Error("password not found");
 
@@ -49,13 +51,15 @@ try{
         throw Error("authorized ath only admins can enter");
     var data= req.body;
     let salt= bcrypt.genSaltSync(10)
-;
-    let hash= bcrypt.hashSync(data._id)
+
+    let hash= bcrypt.hashSync(data.password,salt);
+    data.password=hash;
 
     let resu=await usermodel.create(data);
     res.status(200);
     res.send(resu)
 }catch(e){
+    console.log(e);
     res.status(400);
     res.send(e.message)
 
@@ -74,12 +78,12 @@ throw Error("email or password not entered");
 
 
 }
-let user= await usermodel.find({email})[0]
+let user= (await usermodel.find({email}))[0]
 if(!user){
     res.status(404)
     throw Error("user niot found");
 }
-if(user.password!=password){
+if(!bcrypt.compareSync(password,user.password)){
     res.status(404)
 throw Error("password mismatch");
 
@@ -101,4 +105,44 @@ res.send(token);
 
 })
 
+router.post("/enrollcourse",auth,async(req,res)=>{
+   try{
+    let data;
+    if(req.role=="student"){
+    var {enrollmentid}=req.body;
+    console.log("enrollment",enrollmentid);
+     data=await usermodel.findById(req._id);}
+        if(req.role=="admin"){
+            var {enrollmentid,studentid}=req.body;
+            data=await usermodel.findById(studentid);
 
+
+
+        }
+   //data.enrollements.push(enrollmentid);
+   let resu= await usermodel.findByIdAndUpdate(req.role==="student"?req._id:studentid,data,{new:true,runValidators:true});
+    res.status(200);
+    res.send(resu);
+}catch(e){
+res.status(500);
+console.log(e);
+res.send(e.message);
+
+    }
+
+
+})
+router.post("/adminsignup",(req,res)=>{
+    let data= req.body;
+    let salt= bcrypt.genSaltSync(10);
+    let hash=bcrypt.hashSync(data.password,salt);
+    data.password=hash;
+usermodel.create(data).then((resu)=>{
+    res.send(resu);
+}).catch((e)=>{
+
+    res.send(e.message)
+})
+
+})
+module.exports=router;

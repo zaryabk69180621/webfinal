@@ -1,4 +1,4 @@
-const { default: mongoose } = require("mongoose");
+/* const { default: mongoose } = require("mongoose");
 
 let schema= require("mongoose").Schema;
 
@@ -15,3 +15,4 @@ let sectionschema= new schema({
 
 
 let model= mongoose.model("sections",sectionschema)
+ */
