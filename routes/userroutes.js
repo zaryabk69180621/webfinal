@@ -6,13 +6,15 @@ let auth= require("../middlewares/auth");
 let bcrypt= require("bcrypt");
 let gentoken=({_id,role})=>{
 
-let token= jwt.sign({_id,role},process.env.SECRET,{expiresIn:"3d"})
+let token= jwt.sign({_id,role},process.env.SECRET,{expiresIn:"15d"})
 
 return token;
 
 
 
 }
+
+
 router.post("/adminsignin",async(req,res)=>{
 try{
     let {email, password}= req.body;
@@ -90,6 +92,7 @@ throw Error("password mismatch");
 
 }
 res.status(200);
+
 let token= gentoken(user);
 res.send(token);
 
@@ -119,7 +122,7 @@ router.post("/enrollcourse",auth,async(req,res)=>{
 
 
         }
-   //data.enrollements.push(enrollmentid);
+   data.enrollements.push(enrollmentid);
    let resu= await usermodel.findByIdAndUpdate(req.role==="student"?req._id:studentid,data,{new:true,runValidators:true});
     res.status(200);
     res.send(resu);

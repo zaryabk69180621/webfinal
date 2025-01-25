@@ -11,7 +11,7 @@ router.get("/",(req,res)=>{
 /*used to access all the enrollmenets both student and admin can do this*/
 enrollemenetsmodel.find().then((resu)=>{
 res.send(resu);
-
+return;
 
 }).catch((e)=>{
     console.log(e.message);
@@ -56,5 +56,18 @@ enrollemenetsmodel.findByIdAndDelete(req.params.id).then(
 
 
 })
+
+router.post("/makesubmission",(req,res)=>{
+if(req.role!="teacher"){
+    res.send("unauthorized!! only teacher can make submissions");
+
+}
+
+
+
+
+
+})
+
 
 module.exports=router;

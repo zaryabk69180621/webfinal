@@ -1,46 +1,55 @@
-let nodecrone= require("node-crone");
 enrollmentsmodel=require("../models/enrollements");
-classesmodel=require("../models/classes");
+let nodecron=require("node-cron");
+let classmodel= require("../models/classes");
+nodecron.schedule("8 10 * * *",async ()=>{
 
-function dateonly(date){
-    return new Intl.DateTimeFormat('en-us').format(date)
-}
+        console.log("Fetching schedule...");
+        try {
+          const enrollments = await enrollmentsmodel.find(); // Fetch all enrollments
+          console.log("Received enrollments:", enrollments);
+      
+      
+          enrollments.forEach((enrollment) => {
+            ["monday", "tuesday", "wednesday", "thursday", "friday"].forEach((day,i) => {
+              if (enrollment[day]) {
+                let tempdat=new Date();
+                 tempdat.setDate(tempdat.getDate()+i);
+                 let dat= tempdat.getDate()+"/"+(tempdat.getUTCMonth()+1)+"/"+tempdat.getFullYear();
+                enrollment[day].forEach(async(session) => {
+                  
+                  let data={
+                    enrollementID: enrollment._id,
+                    day, // The day of the week
+                    room: session.room,
+                    time: session.time, // Keep time as it is
+                    date: dat // Use the date from the database (don't modify it)
+                  };
+                  await classmodel.create(data);
+
+                });
+              }
+            });
+          });
+      
+        } catch (e) {
+          console.log("Error fetching schedules:", e.message);
+          throw e;
+        }
+      }
+      
+    
+
+)
 
 
 
-let task=async()=>{
-let ernrolls=enrollmentsmodel.find();
-enrollmentsmodel.forEach(async(b)=>{
-let data;
-let x;
-x= new Date();
-x.setDate(x.getDate()+7-x.getDay()+1);
-x=dateonly(x);
-data.Date=x;
-data.room=b.Monday.room;
-data.slot=b.Monday.slot;
 
- await classesmodel.create(data);
-  
-
- x= new Date();
- x.setDate(x.getDate()+7-x.getDay()+1);
- x=dateonly(x);
- data.Date=x;
- data.room=b.tuesday.room;
- data.slot=b.tuesday.slot;
- 
-  await classesmodel.create(data);
- 
- 
-
-
-
-})
+    
 
 
 
 
 
 
-}
+
+

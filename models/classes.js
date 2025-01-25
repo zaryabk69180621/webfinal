@@ -7,14 +7,14 @@ let classTiming=new schema(
         type:schema.Types.ObjectId,
         ref:"enrollements"
     },
-    Date:{
-        type:Date
+    date:{
+        type:String
     },
-    slot:{
+    time:{
         type:String
     },
     room:{
-        string
+        type:String
     }
 },{collection:"classes"}
 )
