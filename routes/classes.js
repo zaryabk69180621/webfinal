@@ -28,9 +28,32 @@ router.get("/getattendance/:classid",async (req,res)=>{
     
     })
 
+router.post("/markattendance/:classid",async (req,res)=>{
+try{
+    let data= req.body;
 
+   let resu= await classmodel.findByIdAndUpdate(req.params.classid,{$set:data},{new:true});
+   console.log("inserted",{resu});
+   if(!resu){
+    throw Error("cant find the record of class");
+
+   }
+
+   res.send(resu);
+}catch(e){
+res.status(500);
+res.send(e.message);
+
+}
+
+
+
+
+
+})
 
 router.get("/:enrollementid",async(req,res)=>{
+    /*get all the classes  before curren date and time of an enrollement*/
     console.log("rewq.rol",req.role);
 if(req.role!="admin"&&req.role!="teacher"){
 res.status(400);
@@ -90,8 +113,9 @@ try{
 
 })
 router.post("/:enrollementid",async(req,res)=>{
-
+/*to setup a makeup class with no clashes*/
     try{
+
         req.body.enrollementID=req.params.enrollementid;
         if(req.role!="teacher"&&req.role!="admin"){
             throw Error("unauthorized!, only teachr or admin allowed");

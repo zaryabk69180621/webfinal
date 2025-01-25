@@ -15,6 +15,18 @@ let classTiming=new schema(
     },
     room:{
         type:String
+    },
+    students:{
+        type:[String],
+        default:[]
+    },
+    presentstudents:{
+        type:[String],
+        default:[]
+    },
+    absentstudents:{
+        type:[String],
+        default:[]
     }
 },{collection:"classes"}
 )
